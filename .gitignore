@@ -1,0 +1,23 @@
+# Bytecode and cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Build and egg info
+build/
+dist/
+*.egg-info/
+
+# Alembic cache (optional)
+alembic/versions/*.pyc
+
+# OS and IDE
+.DS_Store
+.vscode/
+
+# Env files
+.env
