@@ -6,9 +6,6 @@ from datetime import datetime
 class ThumbnailRequest(BaseModel):
     title: str
     description: Optional[str] = ""
-    genre: str
-    style: Optional[str] = "modern"
-    color_scheme: Optional[str] = "vibrant"
 
 class ThumbnailResponse(BaseModel):
     success: bool

@@ -53,63 +53,17 @@ async def generate_thumbnail(
         # Generate optimized prompt
         prompt = ai_service.generate_thumbnail_prompt(
             request.title, 
-            request.description, 
-            request.genre, 
-            request.style
+            request.description
         )
         print("prompt is ",prompt)
 
         result = await image_service.generate_thumbnail_with_gemini(prompt=prompt, original_title=request.title)
-        print(" result is ",result)
+        print(" result is ",result["success"])
+        print(" result is ",result["image_url"])
         
         if not result["success"]:
             raise HTTPException(status_code=500, detail="Failed to generate thumbnail")
         generation_time = time.time() - start_time
-        
-        # # Save to database
-        # thumbnail = Thumbnail(
-        #     title=request.title,
-        #     description=request.description,
-        #     genre=request.genre,
-        #     style=request.style,
-        #     color_scheme=request.color_scheme,
-        #     image_url=result["image_url"],
-        #     download_url=result["download_url"],
-        #     thumbnail_url=result["thumbnail_url"],
-        #     public_id=result["public_id"],
-        #     prompt_used="",  # Placeholder for prompt
-        #     user_email=user_email,
-        #     generation_time=generation_time
-        # )
-        
-        # db.add(thumbnail)
-        # db.commit()
-        # db.refresh(thumbnail)
-        
-        # Update user stats
-        # if user_email:
-        #     user = db.query(User).filter(User.email == user_email).first()
-        #     if not user:
-        #         user = User(email=user_email, total_thumbnails=1)
-        #         db.add(user)
-        #     else:
-        #         user.total_thumbnails += 1
-        #         user.last_active = datetime.utcnow()
-        #     db.commit()
-        
-        # Track analytics
-        # analytics = Analytics(
-        #     thumbnail_id=thumbnail.id,
-        #     action="generate",
-        #     user_email=user_email,
-        #     metadata_data=json.dumps({
-        #         "genre": request.genre,
-        #         "style": request.style,
-        #         "generation_time": generation_time
-        #     })
-        # )
-        # db.add(analytics)
-        # db.commit()
         
         return ThumbnailResponse(
             success=True,
