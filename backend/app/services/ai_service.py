@@ -1,13 +1,14 @@
 import google.generativeai as genai
 from config import settings
 from typing import List, Dict
+from openai import OpenAI
 
 class AIService:
     def __init__(self):
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-flash")
-        
-    def generate_thumbnail_prompt(self, title: str, description: str, genre: str, style: str = "professional") -> str:
+        """Initialize AI service with Gemini and OpenAI clients"""
+        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+
+    def generate_thumbnail_prompt(self, title: str, description: str) -> str:
         """Generate optimized prompt for thumbnail creation"""
           
         genre_styles = {
@@ -25,17 +26,14 @@ class AIService:
         }
         
         # Get genre-specific guidance
-        genre_guidance = genre_styles.get(genre.lower(), "clear subject focus, good lighting, engaging composition")
-        
+        # genre_guidance = genre_styles.get(genre.lower(), "clear subject focus, good lighting, engaging composition")
+
         prompt_for_llm = f"""
             You are an expert YouTube thumbnail designer. Based on the video info below, create a clear, vivid, cinematic image prompt for AI image generation.
             
             **Video details:**
             Title: "{title}"
             Description: "{description}"
-            Genre: "{genre}"
-            Style: "{style}"
-            
             **Thumbnail style:**
             - One strong focal point (person, object, or scene)
             - Bright, high-contrast colors that stand out
@@ -45,23 +43,27 @@ class AIService:
             - Camera angle (close-up, medium shot, or wide shot)
             - Include bold, readable text overlay with the title or main phrase, styled to pop (e.g., metallic, glitch, or vibrant colors), placed prominently but not blocking the focal point
             
-            Write a 40-60 word detailed prompt describing the scene, colors, lighting, main subject, and the text overlay style and placement.
+            Write a 50-60 word detailed prompt describing the scene, colors, lighting, main subject, and the text overlay style and placement.
             
             Avoid clutter, small details, and muddy colors.
             
             Example: "Close-up of excited person pointing at glowing smartphone, bright studio lighting, vibrant blue background, shocked expression, dynamic pose. Bold white text overlay near bottom with metallic effect: 'Amazing Tech Revealed!'"
-            
             Thumbnail prompt:
             """
-            
+
         print("generate_thumbnail_prompt called")
 
         try:
-            response = self.model.generate_content(prompt_for_llm)
-            return response.text
+            response = self.client.responses.create(
+                model="gpt-4.1-mini",
+                input=prompt_for_llm
+            )
+            print(f"Response from OpenAI: {response.output_text}")
+            return response.output_text
+        
         except Exception as e:
             print(f"exception is {e}")
-            return f"Exception: Create a {style} YouTube thumbnail for '{title}' in {genre} style with bold text and vibrant colors"
+            return f"Exception: Create a YouTube thumbnail for '{title}' style with bold text and vibrant colors"
 
     def analyze_thumbnail_effectiveness(self, title: str, genre: str) -> List[str]:
         """Provide suggestions for thumbnail improvement"""
