@@ -71,17 +71,22 @@ class ImageService:
                         if isinstance(data, bytes):
                             try:
                                 decoded_data = base64.b64decode(data)
-
                             except base64.binascii.Error:
-                                print("ImageService: Data is bytes, but not base64. Assuming raw image bytes.")
                                 decoded_data = data
                         elif isinstance(data, str):
                             decoded_data = base64.b64decode(data)
-                            print(f"ImageService: Decoded base64 string. Length: {len(decoded_data)}")
                         else:
-                            print(f"ImageService: Data is of unexpected type: {type(data)}")
                             continue
-            
+                        
+                        if decoded_data:
+                            try:
+                                image_from_gemini_pil = Image.open(BytesIO(decoded_data))
+                                print(f"ImageService: Successfully created PIL Image. Size: {image_from_gemini_pil.size}")
+                                break  # Exit loop once we have a valid image
+                            except Exception as img_error:
+                                print(f"ImageService: Failed to create PIL Image: {img_error}")
+                                continue
+                    
             if not image_from_gemini_pil:
                 print("ImageService: No valid image could be processed from Gemini response.")
                 return {"success": False, "error": "Failed to generate or process image from AI"}
