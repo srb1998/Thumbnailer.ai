@@ -43,7 +43,7 @@ class AIService:
             - Camera angle (close-up, medium shot, or wide shot)
             - Include bold, readable text overlay with the title or main phrase, styled to pop (e.g., metallic, glitch, or vibrant colors), placed prominently but not blocking the focal point
             
-            Write a 50-60 word detailed prompt describing the scene, colors, lighting, main subject, and the text overlay style and placement.
+            Write a 40-50 word detailed prompt describing the scene, colors, lighting, main subject, and the text overlay style and placement.
             
             Avoid clutter, small details, and muddy colors.
             
