@@ -5,7 +5,7 @@ from routes.api import router
 import os
 
 app = FastAPI(
-    title="ThumbnailGuru - Secret of Viral Videos",
+    title="ThumbNailer - Secret of Viral Videos",
     description="AI-powered YouTube thumbnail generator",
     version="1.0.0"
 )
