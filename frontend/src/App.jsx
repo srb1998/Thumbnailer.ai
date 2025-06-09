@@ -338,8 +338,7 @@ const App = () => {
     totalGenerated: 0,
     avgGenerationTime: 20 
   });
-
-  const API_BASE_URL = 'https://thumbnailerai-production.up.railway.app';
+const API_BASE_URL = 'https://thumbnailerai.up.railway.app';
 
   useEffect(() => {
     const savedThumbnails = localStorage.getItem('thumbnails');
