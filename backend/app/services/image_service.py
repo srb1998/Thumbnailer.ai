@@ -36,7 +36,6 @@ class ImageService:
         print("generate_thumbnail_with_gemini called")
         start_time = time.time()
         try:
-            # key_words = self.extract_main_keywords(title)
             image_generation_request_prompt = f"""
                 Create a 4k graphic like YouTube thumbnail image with these specifications:
 
@@ -59,48 +58,69 @@ class ImageService:
             )
             print("Response received from Gemini")
 
-            image_from_gemini_pil = None # Will hold the PIL Image object
+            image_from_gemini_pil = None
 
-            # Your existing logic to extract image data (which you said works)
+            # Process the response - FIXED VERSION
             if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
                 for part in response.candidates[0].content.parts:
-                    if hasattr(part, 'inline_data') and part.inline_data is not None and hasattr(part.inline_data, 'data'):
-                        
-                        data = part.inline_data.data
-                        decoded_data = None
-                        if isinstance(data, bytes):
-                            try:
-                                decoded_data = base64.b64decode(data)
-                            except base64.binascii.Error:
-                                decoded_data = data
-                        elif isinstance(data, str):
-                            decoded_data = base64.b64decode(data)
-                        else:
+                    if hasattr(part, 'inline_data') and part.inline_data is not None:
+                        try:
+                            # Get the base64 data
+                            image_data = part.inline_data.data
+
+                            # Handle different data types
+                            if isinstance(image_data, str):
+
+                                decoded_data = base64.b64decode(image_data)
+                            elif isinstance(image_data, bytes):
+                            
+                                try:
+                                    
+                                    image_from_gemini_pil = Image.open(BytesIO(image_data))
+                                    print(f"ImageService: Successfully created PIL Image from raw bytes. Size: {image_from_gemini_pil.size}")
+                                    break
+                                except Exception:
+                                    
+                                    try:
+                                        decoded_data = base64.b64decode(image_data)
+                                    except:
+                                        print("ImageService: Could not decode image data")
+                                        continue
+                            else:
+                                print(f"ImageService: Unexpected data type: {type(image_data)}")
+                                continue
+                            
+                            
+                            if image_from_gemini_pil is None and 'decoded_data' in locals():
+                                image_from_gemini_pil = Image.open(BytesIO(decoded_data))
+                                print(f"ImageService: Successfully created PIL Image from decoded data. Size: {image_from_gemini_pil.size}")
+                                break
+
+                        except Exception as img_error:
+                            print(f"ImageService: Failed to process image part: {img_error}")
                             continue
                         
-                        if decoded_data:
-                            try:
-                                image_from_gemini_pil = Image.open(BytesIO(decoded_data))
-                                print(f"ImageService: Successfully created PIL Image. Size: {image_from_gemini_pil.size}")
-                                break  # Exit loop once we have a valid image
-                            except Exception as img_error:
-                                print(f"ImageService: Failed to create PIL Image: {img_error}")
-                                continue
-                    
             if not image_from_gemini_pil:
                 print("ImageService: No valid image could be processed from Gemini response.")
+
+                print("Response structure debugging:")
+                if response.candidates:
+                    for i, candidate in enumerate(response.candidates):
+                        print(f"  Candidate {i}: {candidate}")
+                        if candidate.content and candidate.content.parts:
+                            for j, part in enumerate(candidate.content.parts):
+                                print(f"    Part {j}: {part}")
+                                if hasattr(part, 'inline_data'):
+                                    print(f"      inline_data: {part.inline_data}")
                 return {"success": False, "error": "Failed to generate or process image from AI"}
 
-            # Generate filename
             sanitized_title = re.sub(r'\W+', '_', original_title[:30])
             filename = f"thumbnail_{sanitized_title}_{uuid.uuid4().hex[:4]}.png"
 
-            # Convert image to bytes for Cloudinary upload
             img_byte_array = BytesIO()
             image_from_gemini_pil.save(img_byte_array, format='PNG')
             img_bytes_for_upload = img_byte_array.getvalue()
 
-            # Upload directly to Cloudinary
             print(f"ImageService: Uploading image to Cloudinary as '{filename}'...")
             upload_result = self.storage.upload_image_from_bytes(
                 image_data=img_bytes_for_upload,
@@ -115,7 +135,7 @@ class ImageService:
 
             print(f"ImageService: ✓ Successfully uploaded to Cloudinary: {upload_result.get('url')}")
             generation_time = time.time() - start_time
-            
+
             return {
                 "success": True,
                 "image_url": upload_result.get("url"),
