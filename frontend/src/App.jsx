@@ -9,7 +9,7 @@ const HomePage = ({ setCurrentPage }) => (
       <div className="hero-content">
         <div className="logo-container">
           <div className="logo">🎬</div>
-          <h1 className="brand-title">ThumbnailGuru</h1>
+          <h1 className="brand-title">ThumbNailer</h1>
           <p className="brand-subtitle">Secret of Viral Videos</p>
         </div>
         
@@ -43,7 +43,7 @@ const HomePage = ({ setCurrentPage }) => (
 
     <section className="features-section">
       <div className="container">
-        <h2 className="section-title">Why Choose ThumbnailGuru?</h2>
+        <h2 className="section-title">Why Choose ThumbNailer?</h2>
         
         <div className="features-grid">
           <div className="feature-card">
@@ -109,7 +109,7 @@ const HomePage = ({ setCurrentPage }) => (
           <div className="footer-brand">
             <div className="footer-logo">
               <span className="footer-logo-icon">🎬</span>
-              <span className="footer-logo-text">ThumbnailGuru</span>
+              <span className="footer-logo-text">ThumbNailer</span>
             </div>
             {/* <p className="footer-tagline">Secret of Viral Videos</p>  Removed this if the subtitle serves better */}
             <p className="footer-sub-tagline">Made with ❤️ for creators around the world</p>
@@ -144,7 +144,7 @@ const HomePage = ({ setCurrentPage }) => (
         </div>
         
         <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} ThumbnailGuru. Empowering creators worldwide.</p>
+          <p>© {new Date().getFullYear()} ThumbNailer. Empowering creators worldwide.</p>
         </div>
       </div>
     </footer>
@@ -172,7 +172,7 @@ const AppPage = ({
         <div className="nav-logo" onClick={() => setCurrentPage('home')} role="button" tabIndex={0} 
              onKeyPress={(e) => e.key === 'Enter' && setCurrentPage('home')}>
           <span className="logo-icon">🎬</span>
-          <span className="logo-text">ThumbnailGuru</span>
+          <span className="logo-text">ThumbNailer</span>
         </div>
         
         <div className="nav-stats">
@@ -339,7 +339,7 @@ const App = () => {
     avgGenerationTime: 20 
   });
 
-  const API_BASE_URL = 'http://localhost:8000';
+  const API_BASE_URL = 'https://thumbnailerai-production.up.railway.app';
 
   useEffect(() => {
     const savedThumbnails = localStorage.getItem('thumbnails');
