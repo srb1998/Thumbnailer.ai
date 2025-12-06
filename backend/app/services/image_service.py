@@ -50,7 +50,7 @@ class ImageService:
             print(f"prompt is - {image_generation_request_prompt}")
 
             response = self.client.models.generate_content(
-                model="gemini-2.0-flash-preview-image-generation",
+                model="gemini-2.5-flash-image",
                 contents=image_generation_request_prompt,
                 config=types.GenerateContentConfig(
                       response_modalities=['TEXT','IMAGE']
